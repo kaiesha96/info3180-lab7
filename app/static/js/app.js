@@ -14,8 +14,54 @@ Vue.component('app-header', {
           </li>
         </ul>
       </div>
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <router-link class="nav-link" to="/">Upload Form <span class="sr-only">(current)</span></router-link>
+          </li>
+        </ul>
+      </div>
     </nav>
     `
+});
+
+const UploadForm = Vue.component('upload-form',{
+    template:`
+    <form @submit.prevent="uploadPhoto" id="uploadForm" method="POST" enctype="multipart/form-data">
+     <div>
+     <label for="description">Description:</label>
+     <textarea id="description" name="description"></textarea>   
+    </div>
+    <input type="file" name="myFile"/>
+    <button>Submit</button>
+    </form>
+    `,
+    methods:{
+        let uploadForm = document.getElementById('uploadForm');
+        let form_data = new FormData(uploadForm);
+        fetch("/api/upload", {
+            method: 'POST',
+            body: form_data,
+            headers: {
+                'X-CSRFToken': token
+                
+            },
+            credentials: 'same-origin' 
+        })
+        .then(function (response) {
+            return response.json();
+            
+        })
+            .then(function (jsonResponse) {
+ 
+        // display a success message
+        console.log(jsonResponse);}).catch(function (error) {
+        console.log(error);
+    });
+    }
+        
+    }
 });
 
 Vue.component('app-footer', {
@@ -44,6 +90,7 @@ const Home = Vue.component('home', {
 const router = new VueRouter({
     routes: [
         { path: "/", component: Home }
+        { path: "/", component: UploadForm}
     ]
 });
 
